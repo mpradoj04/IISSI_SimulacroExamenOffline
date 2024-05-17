@@ -81,6 +81,21 @@ const update = async function (req, res) {
   }
 }
 
+const changeState = async function (req, res) {
+  try {
+    const restaurant = await Restaurant.findByPk(req.params.restaurantId)
+    if (restaurant.status === 'online') {
+      await Restaurant.update({ status: 'offline ' }, { where: { id: req.params.restaurantId } })
+    } else {
+      await Restaurant.update({ status: 'online ' }, { where: { id: req.params.restaurantId } })
+    }
+    const updatedRestaurant = await Restaurant.findByPk(req.params.restaurantId)
+    res.json(updatedRestaurant)
+  } catch (err) {
+    res.status(500).send(err)
+  }
+}
+
 const destroy = async function (req, res) {
   try {
     const result = await Restaurant.destroy({ where: { id: req.params.restaurantId } })
@@ -102,6 +117,7 @@ const RestaurantController = {
   create,
   show,
   update,
-  destroy
+  destroy,
+  changeState
 }
 export default RestaurantController
